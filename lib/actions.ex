@@ -12,7 +12,7 @@ defmodule Robota.Actions do
   @servo_b_pin 22
   @servo_c_pin 18
 
-  @smotor_pins [in1: 2, in2: 3, in3: 4, in4: 17]
+  @smotor_pins [in1: 2]
 
   @ref_atoms [:cs, :clock, :address, :dataout]
   @lf_sensor_data %{sensor0: 0, sensor1: 0, sensor2: 0, sensor3: 0, sensor4: 0, sensor5: 0}
@@ -277,25 +277,9 @@ defmodule Robota.Actions do
   end
 
 def sowing(smotor_ref) do
-  IO.puts("smotor connecting")
-  smotor_action(smotor_ref, [1, 0, 0, 1])
-  Process.sleep(5)
-  smotor_action(smotor_ref, [1, 0, 0, 0])
-  Process.sleep(5)
-  smotor_action(smotor_ref, [1, 1, 0, 0])
-  Process.sleep(5)
-  smotor_action(smotor_ref, [0, 1, 0, 0])
-  Process.sleep(5)
-  smotor_action(smotor_ref, [0, 1, 1, 0])
-  Process.sleep(5)
-  smotor_action(smotor_ref, [0, 0, 1, 0])
-  Process.sleep(5)
-  smotor_action(smotor_ref, [0, 0, 1, 1])
-  Process.sleep(5)
-  smotor_action(smotor_ref, [0, 0, 0, 1])
-  Process.sleep(5)
-  sowing(smotor_ref)
-  IO.puts("smotor connected")
+  smotor_action(smotor_ref, [1])
+  Process.sleep(2000)
+  smotor_action(smotor_ref, [0])
 end
 
 def weeding(dir) do
