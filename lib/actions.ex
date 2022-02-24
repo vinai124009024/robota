@@ -32,7 +32,29 @@ defmodule Robota.Actions do
   @lim_val 800  
 
   def main(str) do
-   
+    motor_ref = Enum.map(@motor_pins, fn {_atom, pin_no} -> GPIO.open(pin_no, :output) end)
+    smotor_ref = Enum.map(@smotor_pins, fn {_atom, pin_no} -> GPIO.open(pin_no, :output) end)
+    pwm_ref = Enum.map(@pwm_pins, fn {_atom, pin_no} -> GPIO.open(pin_no, :output) end)
+    Enum.map(pwm_ref,fn {_, ref_no} -> GPIO.write(ref_no, 1) end)
+    sensor_ref = Enum.map(@sensor_pins, fn {atom, pin_no} -> configure_sensor({atom, pin_no}) end)
+    sensor_ref = Enum.map(sensor_ref, fn{_atom, ref_id} -> ref_id end)
+    sensor_ref = Enum.zip(@ref_atoms, sensor_ref)
+    ir_ref = Enum.map(@ir_pins, fn {_atom, pin_no} -> GPIO.open(pin_no, :input, pull_mode: :pullup) end)
+    #move(motor_ref, sensor_ref, 0, 0)   
+    cond do
+      #str == "move" -> move(motor_ref, sensor_ref, 0, 0)
+      str == "move" -> move(motor_ref, sensor_ref, 0)
+      str == "right" -> turn(motor_ref, sensor_ref, "right", 0)
+      str == "left" -> turn(motor_ref, sensor_ref, "left", 0)
+      str == "sow" -> sowing(smotor_ref)
+      str == "weedr" -> weeding("right")
+      str == "weedl" -> weeding("left")
+      str == "depositr" -> depo_("right")
+      str == "depositl" -> depo_("left")
+      str == "obs" -> get_ir(ir_ref)
+      true -> nil
+    end
+    Enum.map(pwm_ref,fn {_, ref_no} -> GPIO.write(ref_no, 0) end)
   end
   
   def get_ir(ir_ref) do
