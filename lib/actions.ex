@@ -5,7 +5,7 @@ defmodule Robota.Actions do
   alias Circuits.GPIO
 
   @sensor_pins [cs: 5, clock: 25, address: 24, dataout: 23]
-  @ir_pins [dl: 19]
+  @ir_pins [obs: 19, sw: 16]
   @motor_pins [rb: 12, rf: 13, lf: 20, lb: 21]
   @pwm_pins [enl: 6, enr: 26]
   @servo_a_pin 27
@@ -51,19 +51,27 @@ defmodule Robota.Actions do
       str == "weedl" -> weeding("left")
       str == "depositr" -> depo_("right")
       str == "depositl" -> depo_("left")
-      str == "obs" -> get_ir(ir_ref)
+      str == "obs" -> get_ir(ir_ref, "obs")
       true -> nil
     end
     Enum.map(pwm_ref,fn {_, ref_no} -> GPIO.write(ref_no, 0) end)
   end
   
-  def get_ir(ir_ref) do
+  def get_ir(ir_ref, osw) do
     ir_values = Enum.map(ir_ref,fn {_, ref_no} -> GPIO.read(ref_no) end)
-    if ir_values == [0] do
-     true
+    if osw == "obs" do
+	    if Enum.at(ir_values, 0) == 0 do
+	     true
+	    else
+	     false
+	    end 
     else
-     false
-    end 
+    	    if Enum.at(ir_values, 1) == 0 do
+     	     true
+	    else
+	     false
+	    end
+    end
   end
 
   def turn(motor_ref, sensor_ref, side, state) do
