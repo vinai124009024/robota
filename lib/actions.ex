@@ -284,6 +284,16 @@ defmodule Robota.Actions do
     Pigpiox.Pwm.gpio_pwm(@servo_c_pin, val)
   end
 
+def rotate(d) do
+  i = 180 - d
+  test_servo_b(i)
+  Process.sleep(20)
+  if i != 180 do
+    d = d - 1
+    rotate(d)
+  end
+end
+
 def sowing(smotor_ref) do
   smotor_action(smotor_ref, [1, 0, 0])
   Pigpiox.Pwm.gpio_pwm(17, 250)
