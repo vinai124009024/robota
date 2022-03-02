@@ -46,12 +46,12 @@ defmodule Robota.Actions do
       str == "move" -> move(motor_ref, sensor_ref, 0)
       str == "right" -> turn(motor_ref, sensor_ref, "right", 0)
       str == "left" -> turn(motor_ref, sensor_ref, "left", 0)
-      str == "sow" -> sowing(smotor_ref)
+      str == "sow" -> sowing(smotor_ref, ir_ref)
       str == "weedr" -> weeding("right")
       str == "weedl" -> weeding("left")
       str == "depositr" -> depo_("right")
       str == "depositl" -> depo_("left")
-      str == "obs" -> get_ir(ir_ref, "obs")
+      str == "obs" -> get_ir(ir_ref, "obs") 
       true -> nil
     end
     Enum.map(pwm_ref,fn {_, ref_no} -> GPIO.write(ref_no, 0) end)
@@ -294,13 +294,16 @@ def rotate(d) do
   end
 end
 
-def sowing(smotor_ref) do
+def sowing(smotor_ref, ir_ref) do
+  if get_ir(ir_ref, "sw") == false do
   smotor_action(smotor_ref, [1, 0, 0])
   Pigpiox.Pwm.gpio_pwm(17, 250)
+  Process.sleep(30)
   smotor_action(smotor_ref, [0, 0, 0])
   Pigpiox.Pwm.gpio_pwm(17, 0)
-  Process.sleep(100)
-  sowing(smotor_ref)
+  Process.sleep(20)
+  sowing(smotor_ref, ir_ref)
+  end
 end
 
 def weeding(dir) do
