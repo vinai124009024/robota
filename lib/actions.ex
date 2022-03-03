@@ -297,7 +297,7 @@ def sowing(smotor_ref, ir_ref) do
   # Process.sleep(20)
   # sowing(smotor_ref, ir_ref)
   Process.sleep(3000)
-  end
+  #end
 end
 
 def weeding(dir) do
