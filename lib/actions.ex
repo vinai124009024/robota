@@ -132,11 +132,11 @@ defmodule Robota.Actions do
     
     if state == 0 do
      if side == "right" do
-         Pigpiox.Pwm.gpio_pwm(20, @pwm_value - 30)
+         Pigpiox.Pwm.gpio_pwm(20, @pwm_value)
     Pigpiox.Pwm.gpio_pwm(13, 0)
       else
         Pigpiox.Pwm.gpio_pwm(20, 0)
-    Pigpiox.Pwm.gpio_pwm(13, @pwm_value - 30)
+    Pigpiox.Pwm.gpio_pwm(13, @pwm_value)
       end
       Process.sleep(250)
       turn(motor_ref, sensor_ref, side, 1)
@@ -147,11 +147,11 @@ defmodule Robota.Actions do
      motion_pwm(0)
      else
       if side == "right" do
-         Pigpiox.Pwm.gpio_pwm(20, @pwm_value - 30)
+         Pigpiox.Pwm.gpio_pwm(20, @pwm_value)
     Pigpiox.Pwm.gpio_pwm(13, 0)
       else
         Pigpiox.Pwm.gpio_pwm(20, 0)
-    Pigpiox.Pwm.gpio_pwm(13, @pwm_value - 30)
+    Pigpiox.Pwm.gpio_pwm(13, @pwm_value)
       end
       turn(motor_ref, sensor_ref, side, 1)
      end
