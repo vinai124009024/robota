@@ -41,7 +41,7 @@ defmodule Robota.Actions do
     sensor_ref = Enum.zip(@ref_atoms, sensor_ref)
     ir_ref = Enum.map(@ir_pins, fn {_atom, pin_no} -> GPIO.open(pin_no, :input, pull_mode: :pullup) end) 
     cond do
-      str == "move" -> move(motor_ref, sensor_ref, 0, 0)
+      str == "move" -> move(sensor_ref, 0, 0)
       str == "right" -> turn(motor_ref, sensor_ref, "right", 0)
       str == "left" -> turn(motor_ref, sensor_ref, "left", 0)
       str == "sow" -> sowing(smotor_ref, ir_ref)
@@ -198,7 +198,7 @@ defmodule Robota.Actions do
 #     end
 #  end
 
- def move(motor_ref, sensor_ref, state, pError) do
+ def move(sensor_ref, state, pError) do
     append_sensor_list = [0,1,2,3,4] ++ [5]
     temp_sensor_list = [5 | append_sensor_list]
     l = append_sensor_list
@@ -214,23 +214,19 @@ defmodule Robota.Actions do
     lls = Enum.at(l, 0)
     
     if (((lls>@lim_val)&&(ls>@lim_val)&&(cs>@lim_val)) ||  ((rrs>@lim_val)&&(rs>@lim_val)&&(cs>@lim_val))) && state == 0 do
-      #if (ls+cs+rs+rrs+lls)/5 >= 550 && state == 0 do
-      motor_action(motor_ref, @forward)
-      motion_pwm(@pwm_value)
-      move(motor_ref, sensor_ref, 0, pError)
+      Pigpiox.Pwm.gpio_pwm(20, @pwm_value)
+      Pigpiox.Pwm.gpio_pwm(13, @pwm_value)
+      move(sensor_ref, 0, pError)
     else
     cond do
-    #(ls+cs+rs+rrs+lls)/5 >= 550 ->  
     ((lls>@lim_val)&&(ls>@lim_val)&&(cs>@lim_val)) ||  ((rrs>@lim_val)&&(rs>@lim_val)&&(cs>@lim_val)) -> 
-# || ((ls>@lim_val)&&(lls>@lim_val)) || ((rs>@lim_val)&&(rrs>@lim_val)) ->
-    motion_pwm(0) 
-    motor_action(motor_ref, @stop)             
+    Pigpiox.Pwm.gpio_pwm(20, 0)
+    Pigpiox.Pwm.gpio_pwm(13, 0)         
     true ->
        error = getError(lls, ls, cs, rs, rrs)
        {pError, pid} = calculatePID(error, pError)
-       #IO.inspect(pid)
-       motorPIDcontrol(pid, motor_ref)
-       move(motor_ref, sensor_ref, 1, pError)
+       motorPIDcontrol(pid)
+       move(sensor_ref, 1, pError)
     end
     end
  end
@@ -257,7 +253,7 @@ defmodule Robota.Actions do
     {pError, pidvalue}
  end
 
-  def motorPIDcontrol(pid, motor_ref) do
+  def motorPIDcontrol(pid) do
     leftMotorSpeed = @pwm_value - pid
     rightMotorSpeed = @pwm_value + pid
     Pigpiox.Pwm.gpio_pwm(20, leftMotorSpeed)
