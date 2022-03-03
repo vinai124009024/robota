@@ -129,33 +129,32 @@ defmodule Robota.Actions do
     rs = Enum.at(l, 2)
     rrs = Enum.at(l, 1)
     lls = Enum.at(l, 0)
-     
-    if cs >@lim_val && state == 0 do
+    
+    if state == 0 do
      if side == "right" do
-       Pigpiox.Pwm.gpio_pwm(20, @pwm_value - 10)
+         Pigpiox.Pwm.gpio_pwm(20, @pwm_value - 30)
     Pigpiox.Pwm.gpio_pwm(13, 0)
-     else
+      else
         Pigpiox.Pwm.gpio_pwm(20, 0)
-    Pigpiox.Pwm.gpio_pwm(13, @pwm_value - 10)
-     end      
-     turn(motor_ref, sensor_ref, side, 0)
-    else
+    Pigpiox.Pwm.gpio_pwm(13, @pwm_value - 30)
+      end
+      Process.sleep(250)
+      turn(motor_ref, sensor_ref, side, 1)
+    end
+     
      if cs >@lim_val do
      motor_action(motor_ref, @stop)
      motion_pwm(0)
      else
       if side == "right" do
-         Pigpiox.Pwm.gpio_pwm(20, @pwm_value - 10)
+         Pigpiox.Pwm.gpio_pwm(20, @pwm_value - 30)
     Pigpiox.Pwm.gpio_pwm(13, 0)
       else
         Pigpiox.Pwm.gpio_pwm(20, 0)
-    Pigpiox.Pwm.gpio_pwm(13, @pwm_value - 10)
-        
+    Pigpiox.Pwm.gpio_pwm(13, @pwm_value - 30)
       end
       turn(motor_ref, sensor_ref, side, 1)
      end
-    end
-
  end
 
 #  def move(motor_ref, sensor_ref, state) do
