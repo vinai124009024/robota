@@ -293,14 +293,15 @@ def rotate(d) do
 end
 
 def sowing(smotor_ref, ir_ref) do
-  if get_ir(ir_ref, "sw") == false do
-  smotor_action(smotor_ref, [1, 0, 0])
-  Pigpiox.Pwm.gpio_pwm(17, 250)
-  Process.sleep(30)
-  smotor_action(smotor_ref, [0, 0, 0])
-  Pigpiox.Pwm.gpio_pwm(17, 0)
-  Process.sleep(20)
-  sowing(smotor_ref, ir_ref)
+  # if get_ir(ir_ref, "sw") == false do
+  # smotor_action(smotor_ref, [1, 0, 0])
+  # Pigpiox.Pwm.gpio_pwm(17, 250)
+  # Process.sleep(30)
+  # smotor_action(smotor_ref, [0, 0, 0])
+  # Pigpiox.Pwm.gpio_pwm(17, 0)
+  # Process.sleep(20)
+  # sowing(smotor_ref, ir_ref)
+  Process.sleep(3000)
   end
 end
 
