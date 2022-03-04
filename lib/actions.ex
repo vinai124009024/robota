@@ -44,7 +44,7 @@ defmodule Robota.Actions do
       str == "move" -> move(sensor_ref, 0, 0)
       str == "right" -> turn(motor_ref, sensor_ref, "right", 0)
       str == "left" -> turn(motor_ref, sensor_ref, "left", 0)
-      str == "sow" -> sowing(smotor_ref, ir_ref)
+      str == "sow" -> sowing(smotor_ref, 0)
       str == "weedr" -> weeding("right")
       str == "weedl" -> weeding("left")
       str == "depositr" -> depo_("right")
@@ -287,17 +287,17 @@ def rotate(d) do
   end
 end
 
-def sowing(smotor_ref, ir_ref) do
-  # if get_ir(ir_ref, "sw") == false do
-  # smotor_action(smotor_ref, [1, 0, 0])
-  # Pigpiox.Pwm.gpio_pwm(17, 250)
-  # Process.sleep(30)
-  # smotor_action(smotor_ref, [0, 0, 0])
-  # Pigpiox.Pwm.gpio_pwm(17, 0)
-  # Process.sleep(20)
-  # sowing(smotor_ref, ir_ref)
-  Process.sleep(3000)
-  #end
+def sowing(smotor_ref, i) do
+if i<200 do
+  smotor_action(smotor_ref, [1, 0, 0])
+  Pigpiox.Pwm.gpio_pwm(17, 250)
+  Process.sleep(30)
+  smotor_action(smotor_ref, [0, 0, 0])
+  Pigpiox.Pwm.gpio_pwm(17, 0)
+  Process.sleep(20)
+  i = i + 1
+  sowing(smotor_ref, i)
+ end
 end
 
 def weeding(dir) do
