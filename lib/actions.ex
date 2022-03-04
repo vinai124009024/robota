@@ -289,7 +289,7 @@ def rotate(d) do
 end
 
 def sowing(smotor_ref, i, d) do
-if i<50 && i > 0 do
+if i<70 && i > 0 do
   smotor_action(smotor_ref, [1, 0, 0])
   Pigpiox.Pwm.gpio_pwm(17, 250)
   Process.sleep(30)
