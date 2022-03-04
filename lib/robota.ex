@@ -292,8 +292,7 @@ defmodule Robota do
       robot
     else    
     {:obstacle_presence, obs} = Robota.PhoenixSocketClient.send_robot_status(cli_proc_name, robot)
-    robot = if robot.x == 3 && robot.y == :b && robot.facing == :west do
-     IO.puts("here")
+    robot = if (robot.x == 3 && robot.y == :b && robot.facing == :west) || (robot.x == 4 && robot.y == :c && robot.facing == :east) do
       Robota.PhoenixSocketClient.send_for_eval(2, cli_proc_name, %{"x": robot.x, "y": robot.y, "face": robot.facing})
       robot = left(robot)
       Robota.Actions.main("left")
@@ -301,7 +300,6 @@ defmodule Robota do
       robot = move(robot)
       Robota.Actions.main("move")
       Robota.PhoenixSocketClient.send_robot_status(cli_proc_name, robot)
-      IO.puts("here2")
       robot
     else
       robot

@@ -317,7 +317,7 @@ if i<70 && i > 0 do
 end
 
 def weeding(dir) do
-  test_servo_a(40)
+  test_servo_a(25)
   Process.sleep(700)
   test_servo_c(20)
   Process.sleep(700)
