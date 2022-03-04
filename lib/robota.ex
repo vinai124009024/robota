@@ -287,12 +287,23 @@ defmodule Robota do
 
   def reach_goal(robot, gx, gy, cli_proc_name, ch2, face_list)do
     # stop 4,c | 3,e | 3,b | 1,c  start 1,c,east | 3,e,south  stop 4,c | 3,b
-    Process.sleep(1000)
     if robot.x == gx && robot.y == gy do
       Robota.PhoenixSocketClient.send_robot_status(cli_proc_name, robot)
       robot
     else    
     {:obstacle_presence, obs} = Robota.PhoenixSocketClient.send_robot_status(cli_proc_name, robot)
+    robot = if robot.x == 3 && robot.y == :b && robot.facing == :west do
+      Robota.PhoenixSocketClient.send_for_eval(2, channel, %{"x": robot.x, "y": robot.y, "face": robot.facing})
+      robot = left(robot)
+      Robota.Actions.main("left")
+      Robota.PhoenixSocketClient.send_robot_status(cli_proc_name, robot)
+      robot = move(robot)
+      Robota.Actions.main("move")
+      Robota.PhoenixSocketClient.send_robot_status(cli_proc_name, robot)
+      robot
+    else
+      robot
+    end
     cond do
       check_for_robot(robot, ch2) && (closer_to_goal(move(robot), {:x, gx}) || closer_to_goal(move(robot), {:y, gy})) ->
         reach_goal(robot, gx, gy, cli_proc_name, ch2, face_list)
