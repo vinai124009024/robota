@@ -331,7 +331,7 @@ def weeding(dir) do
   Process.sleep(700)
   test_servo_c(85)
   Process.sleep(700)
-  test_servo_a(40)
+  test_servo_a(25)
   Process.sleep(700)
   test_servo_b(90)
 end
