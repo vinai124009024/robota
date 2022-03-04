@@ -309,11 +309,7 @@ if i<50 && i > 0 do
     i = i + 1
     sowing(smotor_ref, i, d)
   else
-    if d == "right" do
-     test_servo_b(180)
-    else
-     test_servo_b(0)
-    end
+    test_servo_b(90)
     Process.sleep(1000)
   end
  end
