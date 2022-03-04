@@ -221,7 +221,8 @@ defmodule Robota.Actions do
     cond do
     ((lls>@lim_val)&&(ls>@lim_val)&&(cs>@lim_val)) ||  ((rrs>@lim_val)&&(rs>@lim_val)&&(cs>@lim_val)) -> 
     Pigpiox.Pwm.gpio_pwm(20, 0)
-    Pigpiox.Pwm.gpio_pwm(13, 0)         
+    Pigpiox.Pwm.gpio_pwm(13, 0)   
+    motion_pwm(0)
     true ->
        error = getError(lls, ls, cs, rs, rrs)
        {pError, pid} = calculatePID(error, pError)
