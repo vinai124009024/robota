@@ -249,7 +249,7 @@ defmodule Robota.Actions do
     p = error
     d = error-pError
     pError = error
-    pidvalue = (17*p) + (17*d)
+    pidvalue = (20*p) + (20*d)
     {pError, pidvalue}
  end
 
@@ -277,16 +277,6 @@ defmodule Robota.Actions do
     Pigpiox.Pwm.set_pwm_frequency(@servo_c_pin, @pwm_frequency)
     Pigpiox.Pwm.gpio_pwm(@servo_c_pin, val)
   end
-
-def rotate(d) do
-  i = 180 - d
-  test_servo_b(i)
-  Process.sleep(20)
-  if i != 180 do
-    d = d - 1
-    rotate(d)
-  end
-end
 
 def sowing(smotor_ref, i, d) do
 if i<70 && i > 0 do
