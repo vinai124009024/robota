@@ -209,7 +209,7 @@ defmodule Robota do
     ry = Map.get(@robot_map_y_atom_to_num, robot.y)
     #hardcoding
     if robot.x == 2 do
-      robot = reach_goal(robot, robot.x, 6, cli_proc_name, ch2, [:straight])
+      robot = reach_goal(robot, robot.x, :f, cli_proc_name, ch2, [:straight])
       robot = left(robot)
       Robota.Actions.main("left")
       Robota.PhoenixSocketClient.send_robot_status(cli_proc_name, robot)
