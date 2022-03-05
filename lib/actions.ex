@@ -40,6 +40,8 @@ defmodule Robota.Actions do
   @pwm_value 100
   @lim_val 800  
 
+  # All the calls to the robot movements pass through main function
+
   def main(str) do
     motor_ref = Enum.map(@motor_pins, fn {_atom, pin_no} -> GPIO.open(pin_no, :output) end)
     smotor_ref = Enum.map(@smotor_pins, fn {_atom, pin_no} -> GPIO.open(pin_no, :output) end)
@@ -64,6 +66,8 @@ defmodule Robota.Actions do
     end
     Enum.map(pwm_ref,fn {_, ref_no} -> GPIO.write(ref_no, 0) end)
   end
+
+  # Gets the ir output value for bothe the obsyacles and for sowing/weeding
   
   def get_ir(ir_ref, osw) do
     ir_values = Enum.map(ir_ref,fn {_, ref_no} -> GPIO.read(ref_no) end)
@@ -81,6 +85,8 @@ defmodule Robota.Actions do
 	    end
     end
   end
+
+  # Used to turn the robot based on the side parameter
 
   def turn(motor_ref, sensor_ref, side, state) do
     append_sensor_list = [0,1,2,3,4] ++ [5]
@@ -125,6 +131,8 @@ defmodule Robota.Actions do
 
  end
 
+ # moves the robot forward from one mode to another
+
  def move(sensor_ref, state, pError) do
     append_sensor_list = [0,1,2,3,4] ++ [5]
     temp_sensor_list = [5 | append_sensor_list]
@@ -158,6 +166,8 @@ defmodule Robota.Actions do
     end
     end
  end
+
+ # calculates the error for pid control
  
   def getError(lls, ls, cs, rs, rrs) do
     cond do
@@ -173,6 +183,9 @@ defmodule Robota.Actions do
     end
   end
 
+
+  #calculates the pid value
+
   def calculatePID(error, pError) do
     p = error
     d = error-pError
@@ -181,6 +194,8 @@ defmodule Robota.Actions do
     {pError, pidvalue}
  end
 
+ #assigns the pwm value according to the pid value
+
   def motorPIDcontrol(pid) do
     leftMotorSpeed = @pwm_value - pid
     rightMotorSpeed = @pwm_value + pid
@@ -188,11 +203,15 @@ defmodule Robota.Actions do
     Pigpiox.Pwm.gpio_pwm(13, rightMotorSpeed)
   end
 
+  #moves servo a for vertical movement
+
   def test_servo_a(angle) do
     val = trunc(((2.5 + 10.0 * angle / 150) / 100 ) * 255)
     Pigpiox.Pwm.set_pwm_frequency(@servo_a_pin, @pwm_frequency)
     Pigpiox.Pwm.gpio_pwm(@servo_a_pin, val)
   end
+
+  #moves servo b for horizontal movement
 
   def test_servo_b(angle) do
     val = trunc(((2.5 + 10.0 * angle / 150) / 100 ) * 255)
@@ -200,11 +219,15 @@ defmodule Robota.Actions do
     Pigpiox.Pwm.gpio_pwm(@servo_b_pin, val)
   end
   
+  #moves servo c for gripper movement
+
   def test_servo_c(angle) do
     val = trunc(((2.5 + 10.0 * angle / 150) / 100 ) * 255)
     Pigpiox.Pwm.set_pwm_frequency(@servo_c_pin, @pwm_frequency)
     Pigpiox.Pwm.gpio_pwm(@servo_c_pin, val)
   end
+
+  #rotates the motor in the arm for sowing the seeds via a conveyor belt
 
 def sowing(smotor_ref, i, d) do
 if i<70 && i > 0 do
@@ -233,6 +256,8 @@ if i<70 && i > 0 do
  end
 end
 
+# moves the arm for picking up the stalk from the plant
+
 def weeding(dir) do
   test_servo_a(25)
   Process.sleep(700)
@@ -252,6 +277,8 @@ def weeding(dir) do
   Process.sleep(700)
   test_servo_b(90)
 end
+
+# moves the arm for depositing the stalk
 
   def depo_(dir) do
     if dir == "left" do

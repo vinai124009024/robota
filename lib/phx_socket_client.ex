@@ -23,6 +23,9 @@ defmodule Robota.PhoenixSocketClient do
 
   You may refer: https://github.com/mobileoverlord/phoenix_client/issues/29#issuecomment-660518498
   """
+
+  # connects to the server and joins the channel 
+
   def connect_server do
 
     ###########################
@@ -92,10 +95,14 @@ defmodule Robota.PhoenixSocketClient do
   ## You may create extra helper functions as needed. ##
   ######################################################
 
+  # gets all the goals to be reached
+
   def get_goals(channel) do
     {:ok, g} = PhoenixClient.Channel.push(channel, "get_goals", [])
     g
   end
+
+  # gets the starting positions from the server
 
   def get_start_pos(channel) do
     {:ok, g} = PhoenixClient.Channel.push(channel, "get_start_pos", "robotA")
@@ -107,28 +114,40 @@ defmodule Robota.PhoenixSocketClient do
     end
   end
 
+  # initializes the server variables like goals, updated goals, etc.
+
   def init_server_variables(channel, gl) do
   {:ok, _s} = PhoenixClient.Channel.push(channel, "init", gl)
   end
+
+  # stops the process after all the tasks are done
 
   def stop_process(channel) do
     {:ok, _s} = PhoenixClient.Channel.push(channel, "stop_process", ["A"])
     send_for_eval(9, channel, "nil")
   end
 
+  # gets the updated goals if the other robot have complted a task
+
   def get_updated_goals(channel) do
     {:ok, gs} = PhoenixClient.Channel.push(channel, "get_upd_goals", "robotA")
     gs
   end
 
+  # updates the goals if the robot completes a task
+
   def update_goals(channel, gl) do
     {:ok, _gs} = PhoenixClient.Channel.push(channel, "upd_goals", [gl, "robotA"])
   end
+
+  #gets the current position of robot A to prevent clashing
 
   def get_b_pos(channel) do
     {:ok, pos} = PhoenixClient.Channel.push(channel, "get_pos", "robotB")
     pos
   end
+
+  #sends messages for evaluation
 
   def send_for_eval(id, channel, data) do
    {:ok, _s} = PhoenixClient.Channel.push(channel, "event_msg", %{"event_id" => id, "sender" => "A", "value" => data})
