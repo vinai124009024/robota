@@ -28,7 +28,7 @@ defmodule Robota.Actions do
 
  #@duty_cycles [150, 70, 0]
   @pwm_frequency 50
-  @pwm_value 120
+  @pwm_value 100
   @lim_val 800  
 
   def main(str) do
