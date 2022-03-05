@@ -297,9 +297,6 @@ defmodule Robota do
       robot = left(robot)
       Robota.Actions.main("left")
       Robota.PhoenixSocketClient.send_robot_status(cli_proc_name, robot)
-      robot = move(robot)
-      Robota.Actions.main("move")
-      Robota.PhoenixSocketClient.send_robot_status(cli_proc_name, robot)
       robot
     else
       robot
