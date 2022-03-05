@@ -42,7 +42,7 @@ defmodule Robota.Actions do
     ir_ref = Enum.map(@ir_pins, fn {_atom, pin_no} -> GPIO.open(pin_no, :input, pull_mode: :pullup) end) 
     cond do
       str == "move" -> move(sensor_ref, 0, 0)
-      str == "right" -> turn(motor_ref, sensor_ref, "right", 0)
+      str == "right" -> turn(sensor_ref, "right", 0)
       str == "left" -> turn(sensor_ref, "left", 0)
       str == "sowl" -> sowing(smotor_ref, 0, "left")
       str == "sowr" -> sowing(smotor_ref, 0, "right")
