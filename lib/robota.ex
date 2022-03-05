@@ -207,6 +207,15 @@ defmodule Robota do
   def reach_depo(robot, cli_proc_name,ch2) do
     rx = robot.x
     ry = Map.get(@robot_map_y_atom_to_num, robot.y)
+    #hardcoding
+    if robot.x == 2 do
+      robot = reach_goal(robot, robot.x, 6, cli_proc_name, ch2, [:straight])
+      robot = left(robot)
+      Robota.Actions.main("left")
+      Robota.PhoenixSocketClient.send_robot_status(cli_proc_name, robot)
+      Robota.Actions.main("depositr")
+      robot
+    else
     if 6 - rx < 6 - ry do
       robot = reach_goal(robot, 6, robot.y, cli_proc_name, ch2, [:straight])
       cond do 
@@ -243,6 +252,7 @@ defmodule Robota do
           true -> nil
         end
       end
+    end
     end
   end
 
@@ -289,6 +299,7 @@ defmodule Robota do
       robot
     else    
     {:obstacle_presence, obs} = Robota.PhoenixSocketClient.send_robot_status(cli_proc_name, robot)
+    #hardcoding
     robot = if (robot.x == 3 && robot.y == :b && robot.facing == :west) || (robot.x == 4 && robot.y == :c && robot.facing == :east) || (robot.x == 2 && robot.y == :b && robot.facing == :east) do
       Robota.PhoenixSocketClient.send_for_eval(2, cli_proc_name, %{"x": robot.x, "y": robot.y, "face": robot.facing})
       robot = left(robot)
