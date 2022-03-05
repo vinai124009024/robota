@@ -42,8 +42,8 @@ defmodule Robota.Actions do
     ir_ref = Enum.map(@ir_pins, fn {_atom, pin_no} -> GPIO.open(pin_no, :input, pull_mode: :pullup) end) 
     cond do
       str == "move" -> move(sensor_ref, 0, 0)
-      str == "right" -> turn(sensor_ref, "right", 0)
-      str == "left" -> turn(sensor_ref, "left", 0)
+      str == "right" -> turn(motor_ref, sensor_ref, "right", 0)
+      str == "left" -> turn(motor_ref, sensor_ref, "left", 0)
       str == "sowl" -> sowing(smotor_ref, 0, "left")
       str == "sowr" -> sowing(smotor_ref, 0, "right")
       str == "weedr" -> weeding("right")
@@ -73,50 +73,7 @@ defmodule Robota.Actions do
     end
   end
 
-#   def turn(motor_ref, sensor_ref, side, state) do
-#     append_sensor_list = [0,1,2,3,4] ++ [5]
-#     temp_sensor_list = [5 | append_sensor_list]
-#     l = append_sensor_list
-#         |> Enum.with_index
-#         |> Enum.map(fn {sens_num, sens_idx} ->
-#               analog_read(sens_num, sensor_ref, Enum.fetch(temp_sensor_list, sens_idx))
-#               end)
-#     Enum.each(0..5, fn n -> provide_clock(sensor_ref) end)
-#     GPIO.write(sensor_ref[:cs], 1)
-#     ls = Enum.at(l, 4)
-#     cs = Enum.at(l, 3)
-#     rs = Enum.at(l, 2)
-#     rrs = Enum.at(l, 1)
-#     lls = Enum.at(l, 0)
-    
-#     if state == 0 do
-#      if side == "right" do
-#       motor_action(motor_ref, @sright)
-#       motion_pwm(@pwm_value)
-#      else
-#       motor_action(motor_ref, @sleft)
-#       motion_pwm(@pwm_value)
-#      end      
-#      Process.sleep(300)
-#      turn(motor_ref, sensor_ref, side, 1)
-#     else
-#      if cs>@lim_val do
-#      motor_action(motor_ref, @stop)
-#      else
-#       if side == "right" do
-#         motor_action(motor_ref, @sright)
-#         motion_pwm(@pwm_value)
-#       else
-#         motor_action(motor_ref, @sleft)
-#         motion_pwm(@pwm_value)
-#       end
-#       turn(motor_ref, sensor_ref, side, 1)
-#      end
-#     end
-
-#  end
-
- def turn(sensor_ref, side, state) do
+  def turn(motor_ref, sensor_ref, side, state) do
     append_sensor_list = [0,1,2,3,4] ++ [5]
     temp_sensor_list = [5 | append_sensor_list]
     l = append_sensor_list
@@ -125,6 +82,7 @@ defmodule Robota.Actions do
               analog_read(sens_num, sensor_ref, Enum.fetch(temp_sensor_list, sens_idx))
               end)
     Enum.each(0..5, fn n -> provide_clock(sensor_ref) end)
+    GPIO.write(sensor_ref[:cs], 1)
     ls = Enum.at(l, 4)
     cs = Enum.at(l, 3)
     rs = Enum.at(l, 2)
@@ -133,29 +91,71 @@ defmodule Robota.Actions do
     
     if state == 0 do
      if side == "right" do
-         Pigpiox.Pwm.gpio_pwm(20, @pwm_value)
-    Pigpiox.Pwm.gpio_pwm(13, 0)
-      else
-        Pigpiox.Pwm.gpio_pwm(20, 0)
-    Pigpiox.Pwm.gpio_pwm(13, @pwm_value)
-      end
-      Process.sleep(250)
-      turn(sensor_ref, side, 1)
-    end
-     
-     if cs >@lim_val do
-     motion_pwm(0)
+      motor_action(motor_ref, @sright)
+      motion_pwm(@pwm_value)
+     else
+      motor_action(motor_ref, @sleft)
+      motion_pwm(@pwm_value)
+     end      
+     Process.sleep(300)
+     turn(motor_ref, sensor_ref, side, 1)
+    else
+     if cs>@lim_val do
+     motor_action(motor_ref, @stop)
      else
       if side == "right" do
-         Pigpiox.Pwm.gpio_pwm(20, @pwm_value)
-    Pigpiox.Pwm.gpio_pwm(13, 0)
+        motor_action(motor_ref, @sright)
+        motion_pwm(@pwm_value)
       else
-        Pigpiox.Pwm.gpio_pwm(20, 0)
-    Pigpiox.Pwm.gpio_pwm(13, @pwm_value)
+        motor_action(motor_ref, @sleft)
+        motion_pwm(@pwm_value)
       end
-      turn(sensor_ref, side, 1)
+      turn(motor_ref, sensor_ref, side, 1)
      end
+    end
+
  end
+
+#  def turn(sensor_ref, side, state) do
+#     append_sensor_list = [0,1,2,3,4] ++ [5]
+#     temp_sensor_list = [5 | append_sensor_list]
+#     l = append_sensor_list
+#         |> Enum.with_index
+#         |> Enum.map(fn {sens_num, sens_idx} ->
+#               analog_read(sens_num, sensor_ref, Enum.fetch(temp_sensor_list, sens_idx))
+#               end)
+#     Enum.each(0..5, fn n -> provide_clock(sensor_ref) end)
+#     ls = Enum.at(l, 4)
+#     cs = Enum.at(l, 3)
+#     rs = Enum.at(l, 2)
+#     rrs = Enum.at(l, 1)
+#     lls = Enum.at(l, 0)
+    
+#     if state == 0 do
+#      if side == "right" do
+#          Pigpiox.Pwm.gpio_pwm(20, @pwm_value)
+#     Pigpiox.Pwm.gpio_pwm(13, 0)
+#       else
+#         Pigpiox.Pwm.gpio_pwm(20, 0)
+#     Pigpiox.Pwm.gpio_pwm(13, @pwm_value)
+#       end
+#       Process.sleep(250)
+#       turn(sensor_ref, side, 1)
+#     end
+     
+#      if cs >@lim_val do
+#      motion_pwm(0)
+#      else
+#       if side == "right" do
+#          Pigpiox.Pwm.gpio_pwm(20, @pwm_value)
+#     Pigpiox.Pwm.gpio_pwm(13, 0)
+#       else
+#         Pigpiox.Pwm.gpio_pwm(20, 0)
+#     Pigpiox.Pwm.gpio_pwm(13, @pwm_value)
+#       end
+#       turn(sensor_ref, side, 1)
+#      end
+#  end
 
 #  def move(motor_ref, sensor_ref, state) do
 #     append_sensor_list = [0,1,2,3,4] ++ [5]
