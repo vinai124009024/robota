@@ -128,11 +128,8 @@ defmodule Robota do
   def reach_all_goals(robot, goal_locs, cli_proc_name, ch2) do
     goal_locs = Robota.PhoenixSocketClient.get_updated_goals(cli_proc_name)
     if Enum.empty?(goal_locs) do
-      IO.puts("here")
       {:obstacle_presence, obs} = Robota.PhoenixSocketClient.send_robot_status(cli_proc_name, robot)
-      IO.puts("here1")
       Robota.PhoenixSocketClient.stop_process(cli_proc_name)
-      IO.puts("here2")
       {:ok, robot}
     else
       [gx, gy] = find_closest(robot, goal_locs)
