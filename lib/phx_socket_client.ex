@@ -1,3 +1,10 @@
+# Team id - 2095
+# File name - phx_socket_client.ex
+#theme - Functional Weeder
+#functions - connect_server, wait_until_connected, send_robot_status, get_goals,
+#            get_start_pos, init_server_variables, stop_process, get_updated_goals,
+#            update_goals, get_b_pos, send_for_eval
+
 defmodule Robota.PhoenixSocketClient do
 
   alias PhoenixClient.{Socket, Channel, Message}

@@ -1,3 +1,10 @@
+# Team id - 2095
+# File name - robota.ex
+#theme - Functional Weeder
+#functions - main, start, stop, place, move, right, left, efficient_reach, 
+#            reach_all_goals, adjust, reach_depo, find_closest, temp_reach_goal,
+#            check_for_robot, reach_goal, closer_to_goal, failure
+
 defmodule Robota do
   # max x-coordinate of table top
   @table_top_x 6
@@ -393,9 +400,6 @@ defmodule Robota do
       iex> Robota.report(robot)
       {2, :b, :west}
   """
-  def report(%Robota.Position{x: x, y: y, facing: facing} = _robot) do
-    {x, y, facing}
-  end
 
   @directions_to_the_right %{north: :east, east: :south, south: :west, west: :north}
   @doc """

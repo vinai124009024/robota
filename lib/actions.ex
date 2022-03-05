@@ -1,3 +1,12 @@
+# Team id - 2095
+# File name - actions.ex
+#theme - Functional Weeder
+#functions - main, gat_ir, turn, move, getError, calculatePID, motorPIDcontrol, 
+#            test_servo_a, test_servo_b, test_servo_c, sowing, weeding, depo_, 
+#            configure_sensor, analog_read, provide_clock, read_data, clock_signal,
+#            motor_action, smotor_action, motion_pwm, pwm
+
+
 defmodule Robota.Actions do
 
   require Logger
@@ -115,87 +124,6 @@ defmodule Robota.Actions do
     end
 
  end
-
-#  def turn(sensor_ref, side, state) do
-#     append_sensor_list = [0,1,2,3,4] ++ [5]
-#     temp_sensor_list = [5 | append_sensor_list]
-#     l = append_sensor_list
-#         |> Enum.with_index
-#         |> Enum.map(fn {sens_num, sens_idx} ->
-#               analog_read(sens_num, sensor_ref, Enum.fetch(temp_sensor_list, sens_idx))
-#               end)
-#     Enum.each(0..5, fn n -> provide_clock(sensor_ref) end)
-#     ls = Enum.at(l, 4)
-#     cs = Enum.at(l, 3)
-#     rs = Enum.at(l, 2)
-#     rrs = Enum.at(l, 1)
-#     lls = Enum.at(l, 0)
-    
-#     if state == 0 do
-#      if side == "right" do
-#          Pigpiox.Pwm.gpio_pwm(20, @pwm_value)
-#     Pigpiox.Pwm.gpio_pwm(13, 0)
-#       else
-#         Pigpiox.Pwm.gpio_pwm(20, 0)
-#     Pigpiox.Pwm.gpio_pwm(13, @pwm_value)
-#       end
-#       Process.sleep(250)
-#       turn(sensor_ref, side, 1)
-#     end
-     
-#      if cs >@lim_val do
-#      motion_pwm(0)
-#      else
-#       if side == "right" do
-#          Pigpiox.Pwm.gpio_pwm(20, @pwm_value)
-#     Pigpiox.Pwm.gpio_pwm(13, 0)
-#       else
-#         Pigpiox.Pwm.gpio_pwm(20, 0)
-#     Pigpiox.Pwm.gpio_pwm(13, @pwm_value)
-#       end
-#       turn(sensor_ref, side, 1)
-#      end
-#  end
-
-#  def move(motor_ref, sensor_ref, state) do
-#     append_sensor_list = [0,1,2,3,4] ++ [5]
-#     temp_sensor_list = [5 | append_sensor_list]
-#     l = append_sensor_list
-#         |> Enum.with_index
-#         |> Enum.map(fn {sens_num, sens_idx} ->
-#               analog_read(sens_num, sensor_ref, Enum.fetch(temp_sensor_list, sens_idx))
-#               end)
-#     Enum.each(0..5, fn n -> provide_clock(sensor_ref) end)
-#     GPIO.write(sensor_ref[:cs], 1)
-#     ls = Enum.at(l, 4)
-#     cs = Enum.at(l, 3)
-#     rs = Enum.at(l, 2)
-#     rrs = Enum.at(l, 1) 
-#     lls = Enum.at(l, 0)
-    
-#     if (((lls>@lim_val)&&(ls>@lim_val)&&(cs>@lim_val)) ||  ((rrs>@lim_val)&&(rs>@lim_val)&&(cs>@lim_val))) && state == 0 do
-#       motor_action(motor_ref, @forward)
-#       motion_pwm(@pwm_value)
-#       move(motor_ref, sensor_ref, 0)
-#     else
-#     cond do
-#     ((lls>@lim_val)&&(ls>@lim_val)&&(cs>@lim_val)) ||  ((rrs>@lim_val)&&(rs>@lim_val)&&(cs>@lim_val)) -> motor_action(motor_ref, @stop)             
-#     cs<@lim_val -> if (ls>@lim_val || lls>@lim_val) do
-# 		motor_action(motor_ref, @sright)
-# 	        motion_pwm(@pwm_value)
-#                 move(motor_ref, sensor_ref, 1)
-#               else
-# 		motor_action(motor_ref, @sleft)
-# 	        motion_pwm(@pwm_value)
-#                 move(motor_ref, sensor_ref, 1)
-#               end
-#     true ->
-#        motor_action(motor_ref, @forward)
-#        motion_pwm(@pwm_value)
-#        move(motor_ref, sensor_ref, 1) 
-#     end
-#     end
-#  end
 
  def move(sensor_ref, state, pError) do
     append_sensor_list = [0,1,2,3,4] ++ [5]
