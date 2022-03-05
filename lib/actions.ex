@@ -285,7 +285,7 @@ if i<70 && i > 0 do
   Process.sleep(30)
   smotor_action(smotor_ref, [0, 0, 0])
   Pigpiox.Pwm.gpio_pwm(17, 0)
-  Process.sleep(80)
+  Process.sleep(100)
   i = i + 1
   sowing(smotor_ref, i, d)
  else
