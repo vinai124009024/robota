@@ -105,7 +105,6 @@ defmodule Robota do
     gx = Enum.at(goal_locs, 0) |> Enum.at(0) |> String.to_integer()
     gy = Enum.at(goal_locs, 0) |> Enum.at(1) |> String.to_atom()
     n = temp_reach_goal(robot, gx, gy, 0)
-    Process.sleep(500)
     Robota.PhoenixSocketClient.send_to_b(ch2, {:toyrobotA_n, n})
     receive do
       {:toyrobotB_n, n2} ->
@@ -129,8 +128,11 @@ defmodule Robota do
   def reach_all_goals(robot, goal_locs, cli_proc_name, ch2) do
     goal_locs = Robota.PhoenixSocketClient.get_updated_goals(cli_proc_name)
     if Enum.empty?(goal_locs) do
+      IO.puts("here")
       {:obstacle_presence, obs} = Robota.PhoenixSocketClient.send_robot_status(cli_proc_name, robot)
+      IO.puts("here1")
       Robota.PhoenixSocketClient.stop_process(cli_proc_name)
+      IO.puts("here2")
       {:ok, robot}
     else
       [gx, gy] = find_closest(robot, goal_locs)
@@ -144,7 +146,6 @@ defmodule Robota do
         else
           Robota.Actions.main("sowl")
         end
-       Process.sleep(2000)
        Robota.PhoenixSocketClient.send_for_eval(3, cli_proc_name, Enum.at(g, 0)["num"] |> String.to_integer())
        robot
       else
@@ -154,7 +155,6 @@ defmodule Robota do
         else
           Robota.Actions.main("weedl")
         end
-       Process.sleep(2000)
        Robota.PhoenixSocketClient.send_for_eval(4, cli_proc_name, Enum.at(g, 0)["num"] |> String.to_integer())
        robot = reach_depo(robot, cli_proc_name,ch2)
        Robota.PhoenixSocketClient.send_for_eval(5, cli_proc_name, [Enum.at(g, 0)["num"] |> String.to_integer()])
@@ -296,6 +296,9 @@ defmodule Robota do
       Robota.PhoenixSocketClient.send_for_eval(2, cli_proc_name, %{"x": robot.x, "y": robot.y, "face": robot.facing})
       robot = left(robot)
       Robota.Actions.main("left")
+      Robota.PhoenixSocketClient.send_robot_status(cli_proc_name, robot)
+      robot = move(robot)
+      Robota.Actions.main("move")
       Robota.PhoenixSocketClient.send_robot_status(cli_proc_name, robot)
       robot
     else
